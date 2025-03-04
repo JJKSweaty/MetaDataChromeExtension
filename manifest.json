@@ -1,0 +1,12 @@
+{
+    "mainifest_version": 1,
+    "name": "MediaSession Tracker",
+    "version": "1.0",
+    "description": "Track media session events",
+    "content_scripts": [
+        {
+            "matches": ["*://www.youtube.com/*"],
+            "js": ["content.js"]
+        }
+    ]
+}
