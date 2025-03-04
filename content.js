@@ -10,3 +10,27 @@ mediaArtworkSizes = navigator.mediaSession.metadata.artwork.sizes;
 mediaArtworkSrc = navigator.mediaSession.metadata.artwork.src;
 
 
+const socket = io('ws://127.0.0.1:8080');
+
+socket.on('connect', () => {
+    console.log('connected');
+});     
+
+socket.on('requestTitle', () => {
+    socket.emit('sendTitle', mediaTitle);
+});
+
+socket.on('requestArtist', () => {
+    socket.emit('sendArtist', mediaArtist);
+});
+
+socket.on('requestAlbum', () => {
+    socket.emit('sendAlbum', mediaAlbum);
+});
+
+socket.on('requestArtwork', () => {
+    socket.emit('sendArtwork', {
+        src: mediaArtworkSrc,
+        sizes: mediaArtworkSizes
+    });
+});
