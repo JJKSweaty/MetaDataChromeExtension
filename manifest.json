@@ -2,11 +2,16 @@
     "mainifest_version": 1,
     "name": "MediaSession Tracker",
     "version": "1.0",
+    "background": {
+    "service_worker": "background.js"
+    },
     "description": "Track media session events",
     "content_scripts": [
         {
-            "matches": ["*://www.youtube.com/*"],
+            "matches": ["*://www.youtube.com/*", "*://open.spotify.com/*",
+            "*://music.apple.com/*", "*://soundcloud.com/*"],
             "js": ["content.js"]
         }
     ]
+    
 }
