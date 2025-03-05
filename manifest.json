@@ -1,5 +1,5 @@
 {
-    "mainifest_version": 1,
+    "mainifest_version": 3,
     "name": "MediaSession Tracker",
     "version": "1.0",
     "description": "Track media session events",
