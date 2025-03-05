@@ -34,3 +34,29 @@ socket.on('requestArtwork', () => {
         sizes: mediaArtworkSizes
     });
 });
+
+
+socket.on("command", (data) => {
+    console.log("Received command from Python:", data);
+    switch (data) {
+        case "play":
+            const playBtn = document.querySelector("a.ytp-play-button.ytp-button");
+            playBtn?.click();
+            break;
+        case "pause":
+            const pauseBtn = document.querySelector("a.ytp-play-button.ytp-button");
+            pauseBtn?.click();
+            break;
+        case "next":
+            const nextBtn = document.querySelector("a.ytp-next-button.ytp-button");
+            nextBtn?.click();
+            break;
+        case "previous":
+            const prevBtn = document.querySelector("a.ytp-prev-button.ytp-button");
+            prevBtn?.click();
+            break;
+    }  
+
+});
+  
+
