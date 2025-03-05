@@ -1,26 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Media Session Test</title>
-</head>
-<body>
-  <h1>Media Session API Test</h1>
-  <img src="https://i.ytimg.com/vi/ljxYE-aJD3A/hqdefault.jpg?s…BACGAY4AUAB&rs=AOn4CLCpCO8yMTFCmH5HNuytA0ZTjyFcZA" alt="Video Thumbnail">
-
-  <script>
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: 'Test Title',
-        artist: 'Test Artist',
-        album: 'Test Album',
-        artwork: [
-          { src: 'test-image.jpg', sizes: '96x96', type: 'image/jpg' }
-        ]
-      });
-      console.log('Media Session metadata set.');
-    } else {
-      console.log('Media Session API not supported.');
-    }
-  </script>
-</body>
-</html>
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+  const socket = io("http://127.0.0.1:8080");
+  socket.on('connect', () => console.log('Connected!'));
+</script>

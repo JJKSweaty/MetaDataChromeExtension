@@ -1,14 +1,17 @@
 {
-    "mainifest_version": 2,
-    "name": "MediaSession Tracker",
+    "name": "YouTube Controller Extension",
     "version": "1.0",
-    "description": "Track media session events",
+    "manifest_version": 3,
+    "description": "Controls YouTube via DOM manipulation and receives commands from Python",
+    "permissions": ["scripting", "activeTab"],
+    "host_permissions": ["http://127.0.0.1:8000/*", "*://localhost:8000/*"],
+    "externally_connectable": {"matches": [ "http://127.0.0.1:8000/*", "*://localhost:8000/*" ]},   
     "content_scripts": [
-        {
-            "matches": ["*://www.youtube.com/*", "*://open.spotify.com/*",
-            "*://music.apple.com/*", "*://soundcloud.com/*"],
-            "js": ["content.js"]
-        }
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
     ]
     
-}
+  }
+  

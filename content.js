@@ -1,16 +1,12 @@
-navigator.mediaSession.metadata = new MediaMetadata
+let mediaTitle = "";
+let mediaArtist = "";
+let mediaAlbum = "";
+let mediaArtworkSrc = "";
+let mediaArtworkSizes = "";
 
-const mediaSession = navigator.mediaSession;
-
-mediaTitle = navigator.mediaSession.metadata.title;
-mediaArtist = navigator.mediaSession.metadata.artist;
-mediaAlbum = navigator.mediaSession.metadata.album;
-mediaArtwork = navigator.mediaSession.metadata.artwork;
-mediaArtworkSizes = navigator.mediaSession.metadata.artwork.sizes;
-mediaArtworkSrc = navigator.mediaSession.metadata.artwork.src;
-
-
-const socket = io('ws://127.0.0.1:8080');
+const socket = io("ws://127.0.0.1:8080", {
+    transports: ["websocket"]
+  });
 
 socket.on('connect', () => {
     console.log('connected');
@@ -34,6 +30,30 @@ socket.on('requestArtwork', () => {
         sizes: mediaArtworkSizes
     });
 });
+function updateMediaSession() {
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: mediaTitle,
+        artist: mediaArtist,
+        album: mediaAlbum,
+        artwork: mediaArtworkSrc ? [{ src: mediaArtworkSrc, sizes: mediaArtworkSizes }] : []
+    });
+
+
+socket.emit('sendTitle', {
+    title: mediaTitle,
+});
+socket.emit('sendArtist', {
+    artist: mediaArtist,
+});
+socket.emit('sendAlbum', {
+    album: mediaAlbum,
+});
+socket.emit('sendArtwork', {
+    src: mediaArtworkSrc,
+    sizes: mediaArtworkSizes
+});
+
+}
 
 
 socket.on("command", (data) => {
@@ -59,4 +79,16 @@ socket.on("command", (data) => {
 
 });
   
+function setMediaMetadata(title, artist, album, artworkSrc, artworkSizes) {
+    mediaTitle = title;
+    mediaArtist = artist;
+    mediaAlbum = album;
+    mediaArtworkSrc = artworkSrc;
+    mediaArtworkSizes = artworkSizes;
 
+    
+    updateMediaSession();
+}
+
+
+setMediaMetadata("Song Title", "Artist Name", "Album Name", "https://link-to-artwork.jpg", "300x300");
