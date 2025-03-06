@@ -3,13 +3,12 @@
     "version": "1.0",
     "manifest_version": 3,
     "description": "Controls YouTube via DOM manipulation and receives commands from Python",
-    "permissions": ["scripting", "activeTab"],
-    "host_permissions": ["http://127.0.0.1:8000/*", "*://localhost:8000/*"],
-    "externally_connectable": {"matches": [ "http://127.0.0.1:8000/*", "*://localhost:8000/*" ]},   
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
-        "js": ["content.js"]
+        "js": [
+        "socket.io.js",
+        "content.js"]
       }
     ]
     

@@ -4,9 +4,8 @@ let mediaAlbum = "";
 let mediaArtworkSrc = "";
 let mediaArtworkSizes = "";
 
-const socket = io("ws://127.0.0.1:8080", {
-    transports: ["websocket"]
-  });
+const socket = io("ws://127.0.0.1:8080");
+
 
 socket.on('connect', () => {
     console.log('connected');
@@ -30,6 +29,21 @@ socket.on('requestArtwork', () => {
         sizes: mediaArtworkSizes
     });
 });
+
+// Basically watches to see if the website is gonna change
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (document.title !== oldTitle) {
+        oldTitle = document.title;
+        setMediaMetadata(navigator.mediaSession.metadata.title, navigator.mediaSession.metadata.artist, navigator.mediaSession.metadata.album, navigator.mediaSession.metadata.artwork[0].src, navigator.mediaSession.metadata.artwork[0].sizes);
+        console.log("New video detected by title change:", document.title);
+      }
+    });
+  });
+  
+  observer.observe(document.querySelector("title"), {
+    childList: true,
+  });
 function updateMediaSession() {
     navigator.mediaSession.metadata = new MediaMetadata({
         title: mediaTitle,
@@ -91,4 +105,4 @@ function setMediaMetadata(title, artist, album, artworkSrc, artworkSizes) {
 }
 
 
-setMediaMetadata("Song Title", "Artist Name", "Album Name", "https://link-to-artwork.jpg", "300x300");
+
