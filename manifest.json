@@ -5,7 +5,10 @@
     "description": "Controls YouTube via DOM manipulation and receives commands from Python",
     "content_scripts": [
       {
-        "matches": ["<all_urls>"],
+        "matches": [
+        "*://www.youtube.com/*",
+        "*://open.spotify.com/*"
+      ],
         "js": [
         "socket.io.js",
         "content.js"]

@@ -3,7 +3,7 @@ let mediaArtist = "";
 let mediaAlbum = "";
 let mediaArtworkSrc = "";
 let mediaArtworkSizes = "";
-
+var oldTitle ="";
 const socket = io("ws://127.0.0.1:8080");
 
 
@@ -31,6 +31,11 @@ socket.on('requestArtwork', () => {
 });
 
 // Basically watches to see if the website is gonna change
+
+if (navigator.mediaSession.playbackState === "playing") {
+setInterval(() => {
+    
+
 const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (document.title !== oldTitle) {
@@ -40,10 +45,17 @@ const observer = new MutationObserver((mutations) => {
       }
     });
   });
+
   
   observer.observe(document.querySelector("title"), {
     childList: true,
   });
+}, 1000);
+}
+else {
+    console.log("Media is not playing");
+    setMediaMetadata("", "", "", "", "");
+}
 function updateMediaSession() {
     navigator.mediaSession.metadata = new MediaMetadata({
         title: mediaTitle,
@@ -104,5 +116,6 @@ function setMediaMetadata(title, artist, album, artworkSrc, artworkSizes) {
     updateMediaSession();
 }
 
+setMediaMetadata(navigator.mediaSession.metadata.title, navigator.mediaSession.metadata.artist, navigator.mediaSession.metadata.album, navigator.mediaSession.metadata.artwork[0].src, navigator.mediaSession.metadata.artwork[0].sizes);
 
 
