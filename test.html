@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+  <script>
+    const socket = io("ws://127.0.0.1:8080");
+    socket.on('connect', () => console.log('Connected in normal page!'));
+    socket.on('command', (data) => console.log('Got command:', data));
+  </script>
+</body>
+</html>

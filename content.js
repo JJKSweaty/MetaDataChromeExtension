@@ -4,58 +4,45 @@ let mediaAlbum = "";
 let mediaArtworkSrc = "";
 let mediaArtworkSizes = "";
 var oldTitle ="";
+const video = document.querySelector('video') || document.querySelector('audio');
 const socket = io("ws://127.0.0.1:8080");
 
 
 socket.on('connect', () => {
     console.log('connected');
 });     
+console.log("content.js loaded and running");
 
-socket.on('requestTitle', () => {
-    socket.emit('sendTitle', mediaTitle);
-});
 
-socket.on('requestArtist', () => {
-    socket.emit('sendArtist', mediaArtist);
-});
 
-socket.on('requestAlbum', () => {
-    socket.emit('sendAlbum', mediaAlbum);
-});
-
-socket.on('requestArtwork', () => {
-    socket.emit('sendArtwork', {
-        src: mediaArtworkSrc,
-        sizes: mediaArtworkSizes
-    });
-});
+// Example client-side code:
+socket.on('my_response', (data) => {
+    console.log('Received my_response from server:', data);
+  });
+  
 
 // Basically watches to see if the website is gonna change
-
-if (navigator.mediaSession.playbackState === "playing") {
 setInterval(() => {
-    
-
-const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (document.title !== oldTitle) {
+    if (document.title !== oldTitle) {
         oldTitle = document.title;
-        setMediaMetadata(navigator.mediaSession.metadata.title, navigator.mediaSession.metadata.artist, navigator.mediaSession.metadata.album, navigator.mediaSession.metadata.artwork[0].src, navigator.mediaSession.metadata.artwork[0].sizes);
-        console.log("New video detected by title change:", document.title);
-      }
-    });
-  });
+        console.log("Title changed:", oldTitle);
 
-  
-  observer.observe(document.querySelector("title"), {
-    childList: true,
-  });
-}, 1000);
-}
-else {
-    console.log("Media is not playing");
-    setMediaMetadata("", "", "", "", "");
-}
+        // If there's meta data update dat shiz
+        if (navigator.mediaSession?.metadata) {
+            setMediaMetadata(
+                navigator.mediaSession.metadata.title,
+                navigator.mediaSession.metadata.artist,
+                navigator.mediaSession.metadata.album,
+                navigator.mediaSession.metadata.artwork?.[0]?.src,
+                navigator.mediaSession.metadata.artwork?.[0]?.sizes
+            );
+        } else {
+          
+            setMediaMetadata("", "", "", "", "");
+        }
+    }
+}, 500);
+
 function updateMediaSession() {
     navigator.mediaSession.metadata = new MediaMetadata({
         title: mediaTitle,
@@ -63,6 +50,15 @@ function updateMediaSession() {
         album: mediaAlbum,
         artwork: mediaArtworkSrc ? [{ src: mediaArtworkSrc, sizes: mediaArtworkSizes }] : []
     });
+    
+    //Setting the video duration and keeping track
+    if ('setPositionState' in navigator.mediaSession && video) {
+        navigator.mediaSession.setPositionState({
+          duration: video.duration || 0,
+          playbackRate: video.playbackRate || 1,
+          position: video.currentTime || 0
+        });
+      }
 
 
 socket.emit('sendTitle', {
@@ -81,29 +77,47 @@ socket.emit('sendArtwork', {
 
 }
 
-
+     if('mediaSession' in navigator){
 socket.on("command", (data) => {
     console.log("Received command from Python:", data);
     switch (data) {
         case "play":
-            const playBtn = document.querySelector("a.ytp-play-button.ytp-button");
-            playBtn?.click();
+            if ('mediaSession' in navigator) {
+                // Play
+                navigator.mediaSession.setActionHandler('play', async () => {
+                  console.log('> Play requested');
+                  if (video) {
+                    await video.play();
+                    navigator.mediaSession.playbackState = 'playing';
+                  }
+                });
+            }
             break;
         case "pause":
-            const pauseBtn = document.querySelector("a.ytp-play-button.ytp-button");
-            pauseBtn?.click();
+            navigator.mediaSession.setActionHandler('pause', () => {
+                console.log('> Pause requested');
+                if (video) {
+                  video.pause();
+                  navigator.mediaSession.playbackState = 'paused';
+                }
+              });
             break;
         case "next":
-            const nextBtn = document.querySelector("a.ytp-next-button.ytp-button");
-            nextBtn?.click();
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+                console.log('> Next Track requested');
+                document.querySelector('.next-button')?.click();
+            });
             break;
         case "previous":
-            const prevBtn = document.querySelector("a.ytp-prev-button.ytp-button");
-            prevBtn?.click();
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+                console.log('> Previous Track requested');
+                document.querySelector('.previous-button')?.click();
+              });
             break;
     }  
-
 });
+
+}
   
 function setMediaMetadata(title, artist, album, artworkSrc, artworkSizes) {
     mediaTitle = title;
@@ -119,3 +133,5 @@ function setMediaMetadata(title, artist, album, artworkSrc, artworkSizes) {
 setMediaMetadata(navigator.mediaSession.metadata.title, navigator.mediaSession.metadata.artist, navigator.mediaSession.metadata.album, navigator.mediaSession.metadata.artwork[0].src, navigator.mediaSession.metadata.artwork[0].sizes);
 
 
+socket.on('disconnect', () => {
+});

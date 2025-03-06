@@ -10,7 +10,7 @@
         "*://open.spotify.com/*"
       ],
         "js": [
-        "socket.io.js",
+        "socket.io.min.js",
         "content.js"]
       }
     ]
