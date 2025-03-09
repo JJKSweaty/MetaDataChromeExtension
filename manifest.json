@@ -3,6 +3,17 @@
     "version": "1.0",
     "manifest_version": 3,
     "description": "Controls YouTube via DOM manipulation and receives commands from Python",
+    "permissions": [
+    "http://localhost:8080/",
+    "ws://localhost:8080/socket.io/*"
+  ],
+  
+    "content_security_policy": {
+      "extension_pages": "connect-src ws://127.0.0.1:8080; default-src 'self'"
+    },
+    "background": {
+      "service_worker": "background.js"
+  },
     "content_scripts": [
       {
         "matches": [
