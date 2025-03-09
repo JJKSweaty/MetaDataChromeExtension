@@ -20,11 +20,19 @@
         "*://www.youtube.com/*",
         "*://open.spotify.com/*"
       ],
-        "js": [
-        "socket.io.min.js",
-        "content.js"]
-      }
-    ]
-    
-  }
-  
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["socket.io.js"],
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://music.youtube.com/*",
+        "https://open.spotify.com/*",
+        "https://music.apple.com/*",
+        "https://soundcloud.com/*"
+      ]
+    }
+  ]
+}
