@@ -33,16 +33,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         switch (request.command) {
             case "play":
+                console.log("Playing the media...");
                 video.play();
                 break;
             case "pause":
                 video.pause();
                 break;
             case "next":
-                document.querySelector(".next-button")?.click();
+                document.querySelector(".ytp-next-button")?.click();
                 break;
             case "previous":
-                document.querySelector(".previous-button")?.click();
+                document.querySelector(".ytp-prev-button")?.click();
                 break;
         }
 
