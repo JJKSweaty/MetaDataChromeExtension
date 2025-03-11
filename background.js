@@ -2,7 +2,7 @@ importScripts("socket.io.min.js");
 const socket = io("ws://127.0.0.1:8080", { transports: ["websocket"] });
 
 socket.on("connect", () => {
-    console.log("[✅ WEBSOCKET CONNECTED] Background script connected to WebSocket server.");
+    console.log("[ WEBSOCKET CONNECTED] Background script connected to WebSocket server.");
 });
 
 // Listen for messages from the content script
