@@ -38,4 +38,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         sendResponse({ status: "Metadata received by background script!" });
     }
+    
+    if (request.type === "progressData") {
+        // Send progress data to the WebSocket server
+        socket.emit("sendPosition", request.data.position);
+        socket.emit("sendDuration", request.data.duration);
+        socket.emit("sendPlaying", request.data.isPlaying);
+        socket.emit("sendSource", request.data.source);
+
+        sendResponse({ status: "Progress received by background script!" });
+    }
 });

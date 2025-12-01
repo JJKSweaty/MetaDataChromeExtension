@@ -7,6 +7,26 @@ function sendMetadataToBackground(title, artist, album, artwork) {
     });
 }
 
+// Function to send playback progress data
+function sendProgressToBackground(position, duration, isPlaying, source) {
+    chrome.runtime.sendMessage({
+        type: "progressData",
+        data: { position, duration, isPlaying, source }
+    }, (response) => {
+        // Silent - this fires frequently
+    });
+}
+
+// Detect media source from URL
+function getMediaSource() {
+    const hostname = window.location.hostname;
+    if (hostname.includes("youtube")) return "youtube";
+    if (hostname.includes("spotify")) return "spotify";
+    if (hostname.includes("soundcloud")) return "soundcloud";
+    if (hostname.includes("twitch")) return "twitch";
+    return "unknown";
+}
+
 // Function to extract media metadata
 function checkMediaMetadata() {
     let video = document.querySelector("video, audio");
@@ -20,8 +40,28 @@ function checkMediaMetadata() {
     sendMetadataToBackground(newTitle, newArtist, newAlbum, newArtwork);
 }
 
-// Monitor media changes every 2 seconds
+// Function to send progress updates
+function checkMediaProgress() {
+    let video = document.querySelector("video, audio");
+    if (!video) return;
+    
+    // Get current position and duration in seconds
+    const position = Math.floor(video.currentTime) || 0;
+    const duration = Math.floor(video.duration) || 0;
+    const isPlaying = !video.paused && !video.ended;
+    const source = getMediaSource();
+    
+    // Only send if we have valid duration
+    if (duration > 0) {
+        sendProgressToBackground(position, duration, isPlaying, source);
+    }
+}
+
+// Monitor media metadata every 2 seconds
 setInterval(checkMediaMetadata, 2000);
+
+// Monitor progress more frequently (every 1 second)
+setInterval(checkMediaProgress, 1000);
 
 // Listen for commands from the background script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
